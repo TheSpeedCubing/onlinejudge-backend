@@ -21,7 +21,11 @@ public class JavaCompilerImpl implements ICompiler {
     }
 
     @Override
-    public String getExecuteCommand(File workDir) {
+    public String getExecuteCommand(File workDir) throws IOException, InterruptedException{
+        Process compile = Runtime.getRuntime().exec(
+                new String[]{"javac", "Main.java"}
+        );
+        compile.waitFor();
        return String.format(
                 "./isolate --dir=%s --stdin=/box/input.txt --stdout=/box/output.txt --run -- java -cp %s Main",
                 workDir.getAbsolutePath(),
