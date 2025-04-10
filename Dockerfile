@@ -3,7 +3,7 @@ FROM debian:bookworm
 WORKDIR /app
 
 RUN apt-get update && \
-    apt-get install curl \
+    apt-get install curl && \
     apt-get install -y openjdk-17-jre
 
 RUN mkdir -p /etc/apt/keyrings && \
