@@ -11,7 +11,6 @@ public class SubmitRequest {
     @Schema
     private String stdin;
 
-
     @Getter
     @Schema
     private String code;
