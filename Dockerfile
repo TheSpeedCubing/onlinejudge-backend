@@ -2,14 +2,15 @@ FROM debian:bookworm
 
 WORKDIR /app
 
-RUN apt-get update && \
-    apt-get install -y openjdk-17-jre
+RUN apt update && \
+    apt install curl
+    apt install -y openjdk-17-jre
 
 RUN mkdir -p /etc/apt/keyrings && \
     curl https://www.ucw.cz/isolate/debian/signing-key.asc > /etc/apt/keyrings/isolate.asc && \
     echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/isolate.asc] http://www.ucw.cz/isolate/debian/ bookworm-isolate main" >> /etc/apt/sources.list.d/isolate.list && \
-    apt-get update && \
-    apt-get install -y isolate
+    apt update && \
+    apt install -y isolate
 
 COPY target/onlinejudge-backend-1.0-SNAPSHOT.jar app.jar
 
