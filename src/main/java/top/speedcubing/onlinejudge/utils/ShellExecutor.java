@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 public class ShellExecutor {
 
     public static String exec(String... commands) throws InterruptedException, IOException {
-        // Create the ProcessBuilder for running the "isolate init" command
         StringBuilder commandList = new StringBuilder();
         for (int i = 0; i < commands.length; i++) {
             if (i != 0 && i != commands.length - 1) {
@@ -27,7 +26,8 @@ public class ShellExecutor {
             output.append(line).append(System.lineSeparator());
         }
 
-        process.waitFor();
+        int code = process.waitFor();
+        System.out.println(code + " " +output);
         return output.toString();
     }
 }
