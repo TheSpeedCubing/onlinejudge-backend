@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN apt-get update && \
     apt-get install -y curl && \
-    apt-get install -y openjdk-17-jre
+    apt-get install -y openjdk-17-jdk
 
 RUN mkdir -p /etc/apt/keyrings && \
     curl https://www.ucw.cz/isolate/debian/signing-key.asc > /etc/apt/keyrings/isolate.asc && \
