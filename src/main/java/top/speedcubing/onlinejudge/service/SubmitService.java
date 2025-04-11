@@ -14,13 +14,14 @@ public class SubmitService {
 
     @Autowired
     private CompilerManager compilerManager;
+    int i = 0;
 
     public SubmitResult submit(Integer problemId, String stdin, String code, String language) {
         try {
             ICompiler compiler = compilerManager.getCompiler(language);
 
-            String tempDir = "isolate-temp";
-            ShellExecutor.exec(tempDir);
+            String tempDir = "isolate-temp" +"-"+(i++);
+            ShellExecutor.exec("mkdir " + tempDir);
 
             /*
               echo "$code" > isolate-temp/input.txt
