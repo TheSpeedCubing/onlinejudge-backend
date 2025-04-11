@@ -9,11 +9,12 @@ public class ShellExecutor {
     public static String exec(String... commands) throws InterruptedException, IOException {
         StringBuilder commandList = new StringBuilder();
         for (int i = 0; i < commands.length; i++) {
-            if (i != 0 && i != commands.length - 1) {
+            commandList.append(commands[i]);
+            if (i != commands.length - 1) {
                 commandList.append(" && ");
             }
-            commandList.append(commands[i]);
         }
+        System.out.println(commandList);
         ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", commandList.toString());
         Process process = processBuilder.start();
 

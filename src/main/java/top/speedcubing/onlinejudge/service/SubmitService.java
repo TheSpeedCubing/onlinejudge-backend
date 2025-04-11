@@ -30,14 +30,14 @@ public class SubmitService {
                 inputWriter.write(stdin);
             }
 
-            String path = ShellExecutor.exec("cd " + tempDir, "isolate --init");
+            String box = ShellExecutor.exec("cd " + tempDir, "isolate --init");
 
 
-            compiler.execute(path, tempDir, code, 5120000);
+            compiler.execute(box, tempDir, code, 5120000);
 
 
             // 6. Read output
-            File outputFile = new File(path, "output.txt");
+            File outputFile = new File(box, "output.txt");
             String stdout = "";
             if (outputFile.exists()) {
                 stdout = new String(java.nio.file.Files.readAllBytes(outputFile.toPath()));
