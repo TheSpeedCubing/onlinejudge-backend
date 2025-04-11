@@ -37,12 +37,6 @@ jobs:
       - name: Tag Docker Image
         run: docker tag onlinejudge-backend "$REGISTRY_URL/onlinejudge-backend"
 
-      - name: Set up Tailscale
-        run: |
-          curl -fsSL https://tailscale.com/install.sh | sh
-          sudo tailscale up --authkey=${{ secrets.TAILSCALE_AUTHKEY }} --hostname=ci-runner --ssh
-      
-
       - name: Log in to Docker Registry
         run: echo "$REGISTRY_PASSWORD" | docker login "$REGISTRY_URL" -u "$REGISTRY_USERNAME" --password-stdin
 
