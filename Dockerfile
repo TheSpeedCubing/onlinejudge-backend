@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
