@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.speedcubing.onlinejudge.compiler.CompilerManager;
 import top.speedcubing.onlinejudge.compiler.IExecutor;
+import top.speedcubing.onlinejudge.data.compile.CompileResult;
 import top.speedcubing.onlinejudge.data.execute.ExecuteResult;
 import top.speedcubing.onlinejudge.data.execute.ExecuteSession;
+import top.speedcubing.onlinejudge.data.run.RunResult;
 import top.speedcubing.onlinejudge.data.submit.SubmitRequest;
 import top.speedcubing.onlinejudge.data.submit.SubmitResult;
 import top.speedcubing.onlinejudge.data.submit.Verdict;
@@ -36,69 +38,41 @@ public class SubmitService {
             String box = ShellExecutor.execAt(absTempDir, "isolate --init");
             box = box.substring(0, box.length() - 1) + "/box/";
 
-            // prepare I/O file
-            FileUtils.write(box, "input.txt", stdin);
-            ShellExecutor.execAt(box, "touch compile_stdout.txt");
-            ShellExecutor.execAt(box, "touch compile_stderr.txt");
-            ShellExecutor.execAt(box, "touch stdout.txt");
-            ShellExecutor.execAt(box, "touch stderr.txt");
-
-            // execute code
+            // prepare executor
             IExecutor compiler = compilerManager.getCompiler(language);
             ExecuteSession executeSession = new ExecuteSession(box, absTempDir, code, stdin, 5120000);
-            compiler.execute(executeSession);
+            compiler.init(executeSession);
 
-            // compile.meta check
-            String exitcode = executeSession.getCompileMeta("exitcode");
-            if (!exitcode.equals("0")) {
-                String status = executeSession.getCompileMeta("status");
-                if (status.equals("RE")) {
-                    ExecuteResult executeResult = new ExecuteResult();
+            // prepare I/O file
+            FileUtils.write(box, "input.txt", stdin);
+            executeSession.executeInBox("touch compile_stdout.txt");
+            executeSession.executeInBox("touch compile_stderr.txt");
+            executeSession.executeInBox("touch stdout.txt");
+            executeSession.executeInBox("touch stderr.txt");
 
-                    double time = Double.parseDouble(executeSession.getCompileMeta("time"));
-                    executeResult.setCompileTime(time);
 
-                    String stderr = ShellExecutor.execAt(box,"cat compile_stderr.txt");
-                    executeResult.setStderr(stderr);
-
-                    SubmitResult submitResult = new SubmitResult();
-                    submitResult.setVerdict(Verdict.CE);
-                    submitResult.setExecuteResult(executeResult);
-
-                    return submitResult;
-                }
-            }
-
-            // execute.meta check
-
-            exitcode = executeSession.getExecuteMeta("exitcode");
-            if (!exitcode.equals("0")) {
-                String status = executeSession.getExecuteMeta("status");
-                if (status.equals("RE")) {
-                    ExecuteResult executeResult = new ExecuteResult();
-
-                    double time = Double.parseDouble(executeSession.getExecuteMeta("time"));
-                    executeResult.setCompileTime(time);
-
-                    String stderr = ShellExecutor.execAt(box,"cat stderr.txt");
-                    executeResult.setStderr(stderr);
-
-                    SubmitResult submitResult = new SubmitResult();
-                    submitResult.setVerdict(Verdict.RE);
-                    submitResult.setExecuteResult(executeResult);
-
-                    return submitResult;
-                }
-            }
-
-            String stdout = ShellExecutor.execAt(box,"cat stdout.txt");
-            ExecuteResult executeResult = new ExecuteResult();
-            executeResult.setStdout(stdout);
-            executeResult.setCompileTime(Double.parseDouble(executeSession.getCompileMeta("time")));
-
-            // return SubmitResult
             SubmitResult submitResult = new SubmitResult();
+
+            ExecuteResult executeResult = new ExecuteResult();
             submitResult.setExecuteResult(executeResult);
+
+            // compile
+            CompileResult compileResult = compiler.compile(executeSession);
+            submitResult.getExecuteResult().setCompileResult(compileResult);
+            if (!compileResult.isSuccess()) {
+                submitResult.setVerdict(Verdict.CE);
+                return submitResult;
+            }
+
+            // run
+            RunResult runResult = compiler.run(executeSession);
+            submitResult.getExecuteResult().setRunResult(runResult);
+            if (!runResult.isSuccess()) {
+                submitResult.setVerdict(Verdict.RE);
+                return submitResult;
+            }
+
+            submitResult.setVerdict(Verdict.AC);
             return submitResult;
         } catch (Exception e) {
             e.printStackTrace();
