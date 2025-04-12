@@ -9,18 +9,6 @@ import top.speedcubing.onlinejudge.utils.ShellExecutor;
 
 @Service
 public class JavaCompilerImpl implements ICompiler {
-    @Override
-    public String getExtension() {
-        return "java";
-    }
-
-    @Override
-    public void compile(File file) throws IOException, InterruptedException {
-        Process compile = Runtime.getRuntime().exec(
-                new String[]{"javac", file.getAbsolutePath()}
-        );
-        compile.waitFor();
-    }
 
     @Override
     public void execute(String box, String tempDir, String code, int memoryLimit) throws IOException, InterruptedException {
@@ -29,7 +17,10 @@ public class JavaCompilerImpl implements ICompiler {
             codeWriter.write(code);
         }
 
+        // move input.txt
         ShellExecutor.exec("cp input.txt " + box);
+
+        // create output.txt
         ShellExecutor.exec("touch " + box + "output.txt");
 
         // compile
