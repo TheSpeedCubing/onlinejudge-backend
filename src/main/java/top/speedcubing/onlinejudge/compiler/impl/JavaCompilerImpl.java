@@ -11,10 +11,17 @@ import top.speedcubing.onlinejudge.utils.ShellExecutor;
 public class JavaCompilerImpl implements ICompiler {
 
     @Override
-    public void execute(String box, String tempDir, String code, int memoryLimit) throws IOException, InterruptedException {
+    public void execute(String box, String tempDir, String code, String stdin, int memoryLimit) throws IOException, InterruptedException {
         File codeFile = new File(new File(box), "Main.java");
+        codeFile.createNewFile();
         try (FileWriter codeWriter = new FileWriter(codeFile)) {
             codeWriter.write(code);
+        }
+
+        File inputFile = new File(new File(box), "input.txt");
+        inputFile.createNewFile();
+        try (FileWriter inputWriter = new FileWriter(inputFile)) {
+            inputWriter.write(stdin);
         }
 
         // move input.txt

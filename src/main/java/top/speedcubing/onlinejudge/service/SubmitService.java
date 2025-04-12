@@ -1,7 +1,6 @@
 package top.speedcubing.onlinejudge.service;
 
 import java.io.File;
-import java.io.FileWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.speedcubing.onlinejudge.compiler.CompilerManager;
@@ -20,21 +19,13 @@ public class SubmitService {
         try {
             ICompiler compiler = compilerManager.getCompiler(language);
 
-            String tempDir = "isolate-temp" +"-"+(i++);
+            String tempDir = "isolate-temp" + "-" + (i++);
             ShellExecutor.exec("mkdir " + tempDir);
-
-            /*
-              echo "$code" > isolate-temp/input.txt
-            */
-            File inputFile = new File(new File(tempDir), "input.txt");
-            try (FileWriter inputWriter = new FileWriter(inputFile)) {
-                inputWriter.write(stdin);
-            }
 
             String box = ShellExecutor.exec("cd " + tempDir, "isolate --init");
 
 
-            compiler.execute(box, tempDir, code, 5120000);
+            compiler.execute(box, tempDir, stdin, code, 5120000);
 
 
             // 6. Read output
