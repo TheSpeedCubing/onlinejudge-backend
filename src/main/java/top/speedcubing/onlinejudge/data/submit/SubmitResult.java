@@ -1,26 +1,22 @@
 package top.speedcubing.onlinejudge.data.submit;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.Setter;
+import top.speedcubing.onlinejudge.data.execute.ExecuteResult;
 
+@Getter
+@Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SubmitResult {
 
-    @Getter
-    @Schema
-    private final String stdout;
-    @Getter
-    @Schema
-    private String officialStdout;
-
-    @Getter
     @Schema
     private Verdict verdict;
 
-    @Getter
     @Schema
-    private double time;
+    private ExecuteResult executeResult;
 
-    public SubmitResult(String stdout) {
-        this.stdout = stdout;
-    }
+    @Schema
+    private ExecuteResult officialExecuteResult;
 }

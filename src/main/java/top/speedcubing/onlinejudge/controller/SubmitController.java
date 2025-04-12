@@ -25,11 +25,6 @@ public class SubmitController {
     @ResponseBody
     @Operation(summary = "summary", description = "description")
     public SubmitResult runCode(@RequestBody SubmitRequest request) {
-        Integer problemId = request.getProblemId();
-        String stdin = request.getStdin();
-        String code = request.getCode();
-        String language = request.getLanguage();
-
-        return submitService.submit(problemId, stdin, code, language);
+        return submitService.submit(request);
     }
 }
