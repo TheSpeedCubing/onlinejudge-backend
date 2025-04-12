@@ -4,9 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 public class SubmitResult {
-    public SubmitResult(String stdout) {
-        this.stdout = stdout;
-    }
 
     @Getter
     @Schema
@@ -22,4 +19,8 @@ public class SubmitResult {
     @Getter
     @Schema
     private double time;
+
+    public SubmitResult(String stdout) {
+        this.stdout = stdout;
+    }
 }
