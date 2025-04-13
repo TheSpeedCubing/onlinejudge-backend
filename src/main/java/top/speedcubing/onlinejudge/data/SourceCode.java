@@ -8,7 +8,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class SourceCode {
 
-    @Schema(example = "import java.util.Scanner; class Main { public static void main(String[] args) { String s = new Scanner(System.in).next(); System.out.println(\"input string: \" + s); }}")
+    @Schema(example = "import java.util.Scanner;\n\nclass Main {\n    public static void main(String[] args) {\n        String s = new Scanner(System.in).nextLine();\n        System.out.println(\"input string: \" + s);\n    }\n}\n")
     private final String code;
 
     @Schema(example = "java")
