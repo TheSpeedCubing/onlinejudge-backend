@@ -3,17 +3,16 @@ package top.speedcubing.onlinejudge.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.speedcubing.onlinejudge.compiler.LanguageSelector;
-import top.speedcubing.onlinejudge.data.SourceCode;
 import top.speedcubing.onlinejudge.data.Verdict;
-import top.speedcubing.onlinejudge.data.exception.errorresponse.ErrorResponseList;
-import top.speedcubing.onlinejudge.data.exception.exception.BadRequestException;
-import top.speedcubing.onlinejudge.data.exception.exception.ProblemNotFoundException;
-import top.speedcubing.onlinejudge.data.exception.exception.UnsupportedLanguageException;
-import top.speedcubing.onlinejudge.data.execute.ExecuteRequest;
-import top.speedcubing.onlinejudge.data.execute.ExecuteResult;
-import top.speedcubing.onlinejudge.data.submit.SubmitResult;
-import top.speedcubing.onlinejudge.data.submit.request.AbstractSubmitRequest;
-import top.speedcubing.onlinejudge.data.submit.request.SubmitTestRequest;
+import top.speedcubing.onlinejudge.data.dto.submit.request.AbstractSubmitRequest;
+import top.speedcubing.onlinejudge.data.dto.submit.request.SubmitTestRequest;
+import top.speedcubing.onlinejudge.data.dto.submit.response.SubmitResponse;
+import top.speedcubing.onlinejudge.exception.errorresponse.ErrorResponseList;
+import top.speedcubing.onlinejudge.exception.exception.BadRequestException;
+import top.speedcubing.onlinejudge.exception.exception.ProblemNotFoundException;
+import top.speedcubing.onlinejudge.exception.exception.UnsupportedLanguageException;
+import top.speedcubing.onlinejudge.data.dto.execute.ExecuteRequest;
+import top.speedcubing.onlinejudge.data.dto.execute.ExecuteResponse;
 
 @Service
 public class SubmitService {
@@ -24,7 +23,7 @@ public class SubmitService {
     @Autowired
     ExecuteService executeService;
 
-    public SubmitResult submit(AbstractSubmitRequest request) {
+    public SubmitResponse submit(AbstractSubmitRequest request) {
         ErrorResponseList errorResponseList = new ErrorResponseList();
 
         // get problem
@@ -52,21 +51,21 @@ public class SubmitService {
             stdin = r.getStdin();
         }
 
-        ExecuteResult executeResult = executeService.execute(new ExecuteRequest(stdin, request.getSourceCode()));
+        ExecuteResponse executeResponse = executeService.execute(new ExecuteRequest(stdin, request.getSourceCode()));
 
-        SubmitResult submitResult = new SubmitResult(executeResult);
+        SubmitResponse submitResponse = new SubmitResponse(executeResponse);
 
-        if (!executeResult.getCompileResult().isSuccess()) {
-            submitResult.setVerdict(Verdict.CE);
-            return submitResult;
+        if (!executeResponse.getCompileResult().isSuccess()) {
+            submitResponse.setVerdict(Verdict.CE);
+            return submitResponse;
         }
 
-        if (!executeResult.getRunResult().isSuccess()) {
-            submitResult.setVerdict(Verdict.RE);
-            return submitResult;
+        if (!executeResponse.getRunResponse().isSuccess()) {
+            submitResponse.setVerdict(Verdict.RE);
+            return submitResponse;
         }
 
-        submitResult.setVerdict(Verdict.AC);
-        return submitResult;
+        submitResponse.setVerdict(Verdict.AC);
+        return submitResponse;
     }
 }

@@ -1,4 +1,4 @@
-package top.speedcubing.onlinejudge.data.compile;
+package top.speedcubing.onlinejudge.data.dto.compiler;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -7,7 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import lombok.Getter;
 import lombok.Setter;
-import top.speedcubing.onlinejudge.data.execute.ExecuteSession;
+import top.speedcubing.onlinejudge.data.ExecuteSession;
 import top.speedcubing.onlinejudge.data.meta.Meta;
 import top.speedcubing.onlinejudge.utils.IOUtils;
 

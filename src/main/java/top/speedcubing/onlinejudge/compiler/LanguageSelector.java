@@ -3,7 +3,7 @@ package top.speedcubing.onlinejudge.compiler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.speedcubing.onlinejudge.compiler.impl.JavaExecutorImpl;
-import top.speedcubing.onlinejudge.data.exception.exception.UnsupportedLanguageException;
+import top.speedcubing.onlinejudge.exception.exception.UnsupportedLanguageException;
 
 @Service
 public class LanguageSelector {

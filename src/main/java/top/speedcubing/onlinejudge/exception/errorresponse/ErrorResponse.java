@@ -1,4 +1,4 @@
-package top.speedcubing.onlinejudge.data.exception.errorresponse;
+package top.speedcubing.onlinejudge.exception.errorresponse;
 
 import lombok.Getter;
 

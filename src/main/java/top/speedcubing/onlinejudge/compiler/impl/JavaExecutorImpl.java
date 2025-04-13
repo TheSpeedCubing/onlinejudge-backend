@@ -1,16 +1,30 @@
 package top.speedcubing.onlinejudge.compiler.impl;
 
 import java.io.IOException;
+import lombok.Getter;
 import org.springframework.stereotype.Service;
 import top.speedcubing.onlinejudge.compiler.IExecutor;
-import top.speedcubing.onlinejudge.data.compile.CompileResult;
-import top.speedcubing.onlinejudge.data.execute.ExecuteSession;
+import top.speedcubing.onlinejudge.data.dto.compiler.CompileResult;
+import top.speedcubing.onlinejudge.data.ExecuteSession;
 import top.speedcubing.onlinejudge.data.meta.Meta;
-import top.speedcubing.onlinejudge.data.run.RunResult;
+import top.speedcubing.onlinejudge.data.dto.run.RunResponse;
 import top.speedcubing.onlinejudge.utils.FileUtils;
+import top.speedcubing.onlinejudge.utils.ShellExecutor;
 
 @Service
+@Getter
 public class JavaExecutorImpl implements IExecutor {
+
+    private final String versionString;
+
+    public JavaExecutorImpl() throws IOException, InterruptedException {
+        this.versionString = ShellExecutor.exec("java -version");
+    }
+
+    @Override
+    public String getVersionString() {
+        return this.versionString;
+    }
 
     @Override
     public void init(ExecuteSession executeSession) throws IOException {
@@ -41,25 +55,25 @@ public class JavaExecutorImpl implements IExecutor {
     }
 
     @Override
-    public RunResult run(ExecuteSession executeSession) throws IOException, InterruptedException {
+    public RunResponse run(ExecuteSession executeSession) throws IOException, InterruptedException {
         executeSession.executeInTemp("isolate --processes --mem=%d --dir=etc --meta=execute.meta --stdin=input.txt --stdout=stdout.txt --stderr=stderr.txt --run -- /usr/bin/java -Xmx128M Main".formatted(executeSession.getMemoryLimit()));
 
-        RunResult runResult = new RunResult(executeSession);
+        RunResponse runResponse = new RunResponse(executeSession);
 
-        Meta meta = runResult.getMeta();
+        Meta meta = runResponse.getMeta();
         String exitcode = meta.get("exitcode");
 
         if (!exitcode.equals("0")) {
             String status = meta.get("status");
             if (status.equals("RE")) {
-                runResult.setSuccess(false);
-                runResult.setStderr(executeSession.executeInBox("cat stderr.txt"));
-                return runResult;
+                runResponse.setSuccess(false);
+                runResponse.setStderr(executeSession.executeInBox("cat stderr.txt"));
+                return runResponse;
             }
         }
 
-        runResult.setSuccess(true);
-        runResult.setStdout(executeSession.executeInBox("cat stdout.txt"));
-        return runResult;
+        runResponse.setSuccess(true);
+        runResponse.setStdout(executeSession.executeInBox("cat stdout.txt"));
+        return runResponse;
     }
 }

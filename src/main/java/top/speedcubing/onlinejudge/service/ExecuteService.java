@@ -5,11 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.speedcubing.onlinejudge.compiler.IExecutor;
 import top.speedcubing.onlinejudge.compiler.LanguageSelector;
-import top.speedcubing.onlinejudge.data.compile.CompileResult;
-import top.speedcubing.onlinejudge.data.execute.ExecuteRequest;
-import top.speedcubing.onlinejudge.data.execute.ExecuteResult;
-import top.speedcubing.onlinejudge.data.execute.ExecuteSession;
-import top.speedcubing.onlinejudge.data.run.RunResult;
+import top.speedcubing.onlinejudge.data.dto.compiler.CompileResult;
+import top.speedcubing.onlinejudge.data.dto.execute.ExecuteRequest;
+import top.speedcubing.onlinejudge.data.dto.execute.ExecuteResponse;
+import top.speedcubing.onlinejudge.data.ExecuteSession;
+import top.speedcubing.onlinejudge.data.dto.run.RunResponse;
 import top.speedcubing.onlinejudge.utils.FileUtils;
 import top.speedcubing.onlinejudge.utils.ShellExecutor;
 
@@ -21,7 +21,7 @@ public class ExecuteService {
 
     private int i = 0;
 
-    public ExecuteResult execute(ExecuteRequest executeRequest) {
+    public ExecuteResponse execute(ExecuteRequest executeRequest) {
         try {
             IExecutor compiler = languageSelector.get(executeRequest.getSourceCode().getLanguage());
 
@@ -47,18 +47,18 @@ public class ExecuteService {
 
 
             // compile
-            ExecuteResult executeResult = new ExecuteResult();
+            ExecuteResponse executeResponse = new ExecuteResponse();
             CompileResult compileResult = compiler.compile(executeSession);
-            executeResult.setCompileResult(compileResult);
+            executeResponse.setCompileResult(compileResult);
             if (!compileResult.isSuccess()) {
-                return executeResult;
+                return executeResponse;
             }
 
             // run
-            RunResult runResult = compiler.run(executeSession);
-            executeResult.setRunResult(runResult);
+            RunResponse runResponse = compiler.run(executeSession);
+            executeResponse.setRunResponse(runResponse);
 
-            return executeResult;
+            return executeResponse;
         } catch (IOException | InterruptedException ex) {
             ex.printStackTrace();
             return null;

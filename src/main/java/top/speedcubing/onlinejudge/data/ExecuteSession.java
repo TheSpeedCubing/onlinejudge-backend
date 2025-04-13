@@ -1,8 +1,9 @@
-package top.speedcubing.onlinejudge.data.execute;
+package top.speedcubing.onlinejudge.data;
 
 import java.io.IOException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import top.speedcubing.onlinejudge.data.dto.execute.ExecuteRequest;
 import top.speedcubing.onlinejudge.utils.ShellExecutor;
 
 @Getter

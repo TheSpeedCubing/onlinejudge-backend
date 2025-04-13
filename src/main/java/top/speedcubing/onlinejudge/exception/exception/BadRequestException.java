@@ -1,4 +1,4 @@
-package top.speedcubing.onlinejudge.data.exception.exception;
+package top.speedcubing.onlinejudge.exception.exception;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Collections;
@@ -9,9 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import top.speedcubing.onlinejudge.data.exception.Convertible;
-import top.speedcubing.onlinejudge.data.exception.errorresponse.ErrorResponse;
-import top.speedcubing.onlinejudge.data.exception.errorresponse.ErrorResponseList;
+import top.speedcubing.onlinejudge.exception.Convertible;
+import top.speedcubing.onlinejudge.exception.errorresponse.ErrorResponse;
+import top.speedcubing.onlinejudge.exception.errorresponse.ErrorResponseList;
 
 @Getter
 @AllArgsConstructor

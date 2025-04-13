@@ -1,9 +1,9 @@
-package top.speedcubing.onlinejudge.data.submit.request;
+package top.speedcubing.onlinejudge.data.dto.submit.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
-import top.speedcubing.onlinejudge.data.SourceCode;
+import top.speedcubing.onlinejudge.data.dto.SourceCode;
 
 @Getter
 @Setter

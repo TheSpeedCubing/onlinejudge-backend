@@ -2,9 +2,9 @@ package top.speedcubing.onlinejudge.compiler.impl;
 
 import java.io.IOException;
 import top.speedcubing.onlinejudge.compiler.IExecutor;
-import top.speedcubing.onlinejudge.data.compile.CompileResult;
-import top.speedcubing.onlinejudge.data.execute.ExecuteSession;
-import top.speedcubing.onlinejudge.data.run.RunResult;
+import top.speedcubing.onlinejudge.data.dto.compiler.CompileResult;
+import top.speedcubing.onlinejudge.data.ExecuteSession;
+import top.speedcubing.onlinejudge.data.dto.run.RunResponse;
 
 public class PythonExecutorImpl implements IExecutor {
     @Override
@@ -18,7 +18,12 @@ public class PythonExecutorImpl implements IExecutor {
     }
 
     @Override
-    public RunResult run(ExecuteSession executeSession) throws IOException, InterruptedException {
+    public RunResponse run(ExecuteSession executeSession) throws IOException, InterruptedException {
         return null;
+    }
+
+    @Override
+    public String getVersionString() {
+        return "";
     }
 }

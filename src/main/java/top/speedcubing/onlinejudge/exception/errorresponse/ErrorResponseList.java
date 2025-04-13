@@ -1,8 +1,8 @@
-package top.speedcubing.onlinejudge.data.exception.errorresponse;
+package top.speedcubing.onlinejudge.exception.errorresponse;
 
 import java.util.ArrayList;
 import java.util.List;
-import top.speedcubing.onlinejudge.data.exception.Convertible;
+import top.speedcubing.onlinejudge.exception.Convertible;
 
 public class ErrorResponseList {
 

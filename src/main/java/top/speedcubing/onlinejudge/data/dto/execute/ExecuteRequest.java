@@ -1,17 +1,17 @@
-package top.speedcubing.onlinejudge.data.execute;
+package top.speedcubing.onlinejudge.data.dto.execute;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import top.speedcubing.onlinejudge.data.SourceCode;
+import top.speedcubing.onlinejudge.data.dto.SourceCode;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class ExecuteRequest {
 
-    @Schema
+    @Schema(example = "Hello, World!")
     private final String stdin;
 
     @Schema
