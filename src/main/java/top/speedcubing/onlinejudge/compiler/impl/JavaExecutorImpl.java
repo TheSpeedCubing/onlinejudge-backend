@@ -14,7 +14,7 @@ public class JavaExecutorImpl implements IExecutor {
 
     @Override
     public void init(ExecuteSession executeSession) throws IOException {
-        FileUtils.write(executeSession.getAbsBoxDir(), "Main.java", executeSession.getCode());
+        FileUtils.write(executeSession.getAbsBoxDir(), "Main.java", executeSession.getExecuteRequest().getSourceCode().getCode());
     }
 
     @Override

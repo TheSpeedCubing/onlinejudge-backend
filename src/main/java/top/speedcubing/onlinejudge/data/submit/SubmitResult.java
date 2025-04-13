@@ -20,4 +20,8 @@ public class SubmitResult {
 
     @Schema
     private ExecuteResult officialExecuteResult;
+
+    public SubmitResult(ExecuteResult executeResult) {
+        this.executeResult = executeResult;
+    }
 }

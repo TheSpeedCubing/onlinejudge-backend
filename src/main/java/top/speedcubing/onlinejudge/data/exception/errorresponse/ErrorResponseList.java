@@ -19,4 +19,10 @@ public class ErrorResponseList {
     public void add(Convertible exception) {
         errors.add(exception.toResponse());
     }
+
+    public ErrorResponseList(Convertible... excpetion) {
+        for(Convertible e : excpetion) {
+            add(e);
+        }
+    }
 }

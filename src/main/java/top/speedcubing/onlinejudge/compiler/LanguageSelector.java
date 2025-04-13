@@ -16,4 +16,8 @@ public class LanguageSelector {
         }
         throw new UnsupportedLanguageException(language);
     }
+
+    public void checkLanguage(String language) {
+        get(language);
+    }
 }

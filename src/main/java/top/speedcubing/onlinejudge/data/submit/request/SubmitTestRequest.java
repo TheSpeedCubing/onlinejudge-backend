@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 public class SubmitTestRequest extends AbstractSubmitRequest {
 
-    @Schema
+    @Schema(example = "Hello, World!")
     private String stdin;
 }

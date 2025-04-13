@@ -6,13 +6,11 @@ import lombok.Getter;
 import top.speedcubing.onlinejudge.utils.ShellExecutor;
 
 @Getter
-
 @AllArgsConstructor
 public class ExecuteSession {
     private final String absBoxDir;
     private final String absTempDir;
-    private final String code;
-    private final String stdin;
+    private final ExecuteRequest executeRequest;
     private final int memoryLimit;
 
     // ioi/isolate

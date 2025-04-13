@@ -9,10 +9,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import top.speedcubing.onlinejudge.data.execute.ExecuteRequest;
+import top.speedcubing.onlinejudge.data.execute.ExecuteResult;
 import top.speedcubing.onlinejudge.data.submit.request.SubmitSubmitRequest;
 import top.speedcubing.onlinejudge.data.submit.SubmitResult;
 import top.speedcubing.onlinejudge.data.submit.request.SubmitRandomRequest;
 import top.speedcubing.onlinejudge.data.submit.request.SubmitTestRequest;
+import top.speedcubing.onlinejudge.service.ExecuteService;
 import top.speedcubing.onlinejudge.service.SubmitService;
 
 @RestController
@@ -23,24 +26,34 @@ public class SubmitController {
     @Autowired
     SubmitService submitService;
 
-    @PostMapping("/submit")
+    @Autowired
+    ExecuteService executeService;
+
+    @PostMapping("/execute")
     @ResponseBody
-    @Operation(summary = "summary", description = "submit code")
-    public SubmitResult submit(@RequestBody SubmitSubmitRequest request) {
+    @Operation(summary = "summary", description = "execute code with custom stdin")
+    public ExecuteResult execute(@RequestBody ExecuteRequest request) {
+        return executeService.execute(request);
+    }
+
+    @PostMapping("/finalsubmit")
+    @ResponseBody
+    @Operation(summary = "summary", description = "submit code to see if the code is correct")
+    public SubmitResult finalsubmit(@RequestBody SubmitSubmitRequest request) {
         return submitService.submit(request);
     }
 
-    @PostMapping("/test")
-    @ResponseBody
-    @Operation(summary = "summary", description = "submit code with custom stdin")
-    public SubmitResult test(@RequestBody SubmitTestRequest request) {
-        return submitService.submit(request);
-    }
-
-    @PostMapping("/random")
+    @PostMapping("/randomsubmit")
     @ResponseBody
     @Operation(summary = "summary", description = "submit code with server-generated stdin")
-    public SubmitResult test(@RequestBody SubmitRandomRequest request) {
+    public SubmitResult randomsubmit(@RequestBody SubmitRandomRequest request) {
+        return submitService.submit(request);
+    }
+
+    @PostMapping("/testsubmit")
+    @ResponseBody
+    @Operation(summary = "summary", description = "submit code with custom stdin")
+    public SubmitResult testsubmit(@RequestBody SubmitTestRequest request) {
         return submitService.submit(request);
     }
 }
