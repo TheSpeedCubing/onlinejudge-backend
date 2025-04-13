@@ -1,4 +1,4 @@
-package top.speedcubing.onlinejudge.data.submit;
+package top.speedcubing.onlinejudge.data.submit.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -6,14 +6,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SubmitRequest {
+public abstract class AbstractSubmitRequest {
 
     @Schema
-    private Integer problemId;
-
-    @Schema
-    private String stdin;
-
+    private String problemId;
 
     @Schema
     private String code;

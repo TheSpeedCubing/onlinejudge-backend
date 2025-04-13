@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import top.speedcubing.onlinejudge.data.submit.SubmitRequest;
+import top.speedcubing.onlinejudge.data.submit.request.SubmitSubmitRequest;
 import top.speedcubing.onlinejudge.data.submit.SubmitResult;
+import top.speedcubing.onlinejudge.data.submit.request.SubmitRandomRequest;
+import top.speedcubing.onlinejudge.data.submit.request.SubmitTestRequest;
 import top.speedcubing.onlinejudge.service.SubmitService;
 
 @RestController
@@ -23,8 +25,22 @@ public class SubmitController {
 
     @PostMapping("/submit")
     @ResponseBody
-    @Operation(summary = "summary", description = "description")
-    public SubmitResult runCode(@RequestBody SubmitRequest request) {
+    @Operation(summary = "summary", description = "submit code")
+    public SubmitResult submit(@RequestBody SubmitSubmitRequest request) {
+        return submitService.submit(request);
+    }
+
+    @PostMapping("/test")
+    @ResponseBody
+    @Operation(summary = "summary", description = "submit code with custom stdin")
+    public SubmitResult test(@RequestBody SubmitTestRequest request) {
+        return submitService.submit(request);
+    }
+
+    @PostMapping("/random")
+    @ResponseBody
+    @Operation(summary = "summary", description = "submit code with server-generated stdin")
+    public SubmitResult test(@RequestBody SubmitRandomRequest request) {
         return submitService.submit(request);
     }
 }

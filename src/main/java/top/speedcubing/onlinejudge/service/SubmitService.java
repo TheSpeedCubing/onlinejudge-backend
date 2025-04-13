@@ -2,15 +2,20 @@ package top.speedcubing.onlinejudge.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import top.speedcubing.onlinejudge.compiler.CompilerManager;
+import top.speedcubing.onlinejudge.compiler.LanguageSelector;
 import top.speedcubing.onlinejudge.compiler.IExecutor;
+import top.speedcubing.onlinejudge.data.Verdict;
 import top.speedcubing.onlinejudge.data.compile.CompileResult;
+import top.speedcubing.onlinejudge.data.exception.exception.BadRequestException;
+import top.speedcubing.onlinejudge.data.exception.errorresponse.ErrorResponseList;
+import top.speedcubing.onlinejudge.data.exception.exception.ProblemNotFoundException;
+import top.speedcubing.onlinejudge.data.exception.exception.UnsupportedLanguageException;
 import top.speedcubing.onlinejudge.data.execute.ExecuteResult;
 import top.speedcubing.onlinejudge.data.execute.ExecuteSession;
 import top.speedcubing.onlinejudge.data.run.RunResult;
-import top.speedcubing.onlinejudge.data.submit.SubmitRequest;
 import top.speedcubing.onlinejudge.data.submit.SubmitResult;
-import top.speedcubing.onlinejudge.data.submit.Verdict;
+import top.speedcubing.onlinejudge.data.submit.request.AbstractSubmitRequest;
+import top.speedcubing.onlinejudge.data.submit.request.SubmitTestRequest;
 import top.speedcubing.onlinejudge.utils.FileUtils;
 import top.speedcubing.onlinejudge.utils.ShellExecutor;
 
@@ -18,15 +23,39 @@ import top.speedcubing.onlinejudge.utils.ShellExecutor;
 public class SubmitService {
 
     @Autowired
-    private CompilerManager compilerManager;
+    private LanguageSelector languageSelector;
     int i = 0;
 
-    public SubmitResult submit(SubmitRequest request) {
-        Integer problemId = request.getProblemId();
+    public SubmitResult submit(AbstractSubmitRequest request) {
+        ErrorResponseList errorResponseList = new ErrorResponseList();
 
-        String stdin = request.getStdin();
-        String code = request.getCode();
+        // get problem
+        String problemId = request.getProblemId();
+        if (problemId.equals("0")) {
+            errorResponseList.add(new ProblemNotFoundException(problemId));
+        }
+
+        // get language
         String language = request.getLanguage();
+
+        IExecutor compiler = null;
+        try {
+            compiler = languageSelector.get(language);
+        } catch (UnsupportedLanguageException ex) {
+            errorResponseList.add(ex);
+        }
+
+        if (!errorResponseList.isEmpty()) {
+            throw new BadRequestException(errorResponseList);
+        }
+
+        // get stdin
+        String stdin = "";
+        if (request instanceof SubmitTestRequest r) {
+            stdin = r.getStdin();
+        }
+
+        String code = request.getCode();
 
         try {
             // isolate environment
@@ -39,7 +68,6 @@ public class SubmitService {
             box = box.substring(0, box.length() - 1) + "/box/";
 
             // prepare executor
-            IExecutor compiler = compilerManager.getCompiler(language);
             ExecuteSession executeSession = new ExecuteSession(box, absTempDir, code, stdin, 5120000);
             compiler.init(executeSession);
 

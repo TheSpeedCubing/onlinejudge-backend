@@ -1,4 +1,4 @@
-package top.speedcubing.onlinejudge.data.submit;
+package top.speedcubing.onlinejudge.data;
 
 public enum Verdict {
     AC,
