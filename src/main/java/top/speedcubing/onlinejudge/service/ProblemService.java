@@ -1,6 +1,7 @@
 package top.speedcubing.onlinejudge.service;
 
 import org.springframework.stereotype.Service;
+import top.speedcubing.onlinejudge.data.dto.problem.Problem;
 import top.speedcubing.onlinejudge.data.dto.problem.ProblemInfoRequest;
 import top.speedcubing.onlinejudge.data.dto.problem.ProblemInfoResponse;
 
@@ -9,6 +10,6 @@ import top.speedcubing.onlinejudge.data.dto.problem.ProblemInfoResponse;
 public class ProblemService {
     public ProblemInfoResponse search(ProblemInfoRequest request) {
         // TODO
-        return null;
+        return new ProblemInfoResponse(new Problem(request.getProblemId()));
     }
 }
