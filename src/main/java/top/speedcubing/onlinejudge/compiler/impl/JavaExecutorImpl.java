@@ -22,13 +22,23 @@ public class JavaExecutorImpl implements IExecutor {
     }
 
     @Override
+    public String getSrcFileName() {
+        return "Main.java";
+    }
+
+    @Override
+    public String getName() {
+        return "java";
+    }
+
+    @Override
     public void init(ExecuteSession executeSession) throws IOException {
-        FileUtils.write(executeSession.getBox().getAbsBoxDir(), "Main.java", executeSession.getExecuteRequest().getSourceCode().getCode());
+        FileUtils.write(executeSession.getBox().getAbsBoxDir(), getSrcFileName(), executeSession.getExecuteRequest().getSourceCode().getCode());
     }
 
     @Override
     public CompileResult compile(ExecuteSession executeSession) throws IOException, InterruptedException {
-        executeSession.executeIsolateCommand("--processes --dir=/etc:noexec --meta=compile.meta --stdout=compile_stdout.txt --stderr=compile_stderr.txt --run -- /usr/bin/javac Main.java");
+        executeSession.executeIsolateCommand("--processes --dir=/etc:noexec --meta=compile.meta --stdout=compile_stdout.txt --stderr=compile_stderr.txt --run -- /usr/bin/javac " + getSrcFileName());
 
         CompileResult compileResult = new CompileResult(executeSession);
 

@@ -3,14 +3,22 @@ package top.speedcubing.onlinejudge.data.dto.problem;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.yaml.snakeyaml.Yaml;
+import top.speedcubing.onlinejudge.data.dto.SourceCode;
 import top.speedcubing.onlinejudge.exception.exception.ProblemNotFoundException;
+import top.speedcubing.onlinejudge.service.LanguageService;
 import top.speedcubing.onlinejudge.utils.IOUtils;
 
 @Getter
 public class Problem {
+
+    @Autowired
+    LanguageService languageService;
+
     @Schema
     private final String problemId;
     @Schema
@@ -44,9 +52,31 @@ public class Problem {
             this.outputDescription = IOUtils.toString(new FileInputStream(baseDir + "output.md"));
             this.sampleInput = IOUtils.toString(new FileInputStream(baseDir + "input.txt"));
             this.sampleOutput = IOUtils.toString(new FileInputStream(baseDir + "output.txt"));
-            this.problemProperties = new Yaml().loadAs(new FileInputStream(baseDir + "peroerties.yml"), ProblemProperties.class);
+            this.problemProperties = new Yaml().loadAs(new FileInputStream(baseDir + "properties.yml"), ProblemProperties.class);
         } catch (IOException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    public SourceCode getAnswer(String language) {
+        try {
+            File answerDir = new File("/app/problems/" + problemId + "/answer/");
+
+            String srcFileName = languageService.get(language).getSrcFileName();
+            File answerFile = new File(answerDir, srcFileName);
+            if(!answerFile.exists()) {
+                String[] answerFiles = answerDir.list();
+                if(answerFiles == null || answerFiles.length == 0) {
+                    return null;
+                }
+                srcFileName = answerFiles[0];
+            }
+            answerFile = new File(answerDir, srcFileName);
+
+            return new SourceCode(IOUtils.toString(new FileInputStream(answerFile)), languageService.fromFileName(srcFileName).getName());
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
         }
     }
 }

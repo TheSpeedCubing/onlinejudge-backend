@@ -23,14 +23,14 @@ public class ProblemNotFoundException extends RuntimeException implements Conver
 
 @Getter
 class ProblemNotfoundResponse extends ErrorResponse {
-    @Schema(description = "Error code for unsupported language")
+    @Schema(description = "Error code for problem not found")
     private final int errorCode = 4001;
 
     @Schema(description = "Detailed error message")
     private final String message;
 
     public ProblemNotfoundResponse(ProblemNotFoundException e) {
-        this.message = "Unsupported language: " + e.getProblemId();
+        this.message = "Problem not found: " + e.getProblemId();
     }
 }
 

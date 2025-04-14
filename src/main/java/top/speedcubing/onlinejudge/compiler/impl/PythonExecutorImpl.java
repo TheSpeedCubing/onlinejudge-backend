@@ -22,6 +22,16 @@ public class PythonExecutorImpl implements IExecutor {
     }
 
     @Override
+    public String getSrcFileName() {
+        return "main.py";
+    }
+
+    @Override
+    public String getName() {
+        return "python";
+    }
+
+    @Override
     public void init(ExecuteSession executeSession) throws IOException {
         FileUtils.write(executeSession.getBox().getAbsBoxDir(), "main.py", executeSession.getExecuteRequest().getSourceCode().getCode());
     }
@@ -33,7 +43,7 @@ public class PythonExecutorImpl implements IExecutor {
 
     @Override
     public RunResponse run(ExecuteSession executeSession) throws IOException, InterruptedException {
-        executeSession.executeIsolateCommand("--processes --mem=%d --dir=/etc:noexec --meta=execute.meta --stdin=input.txt --stdout=stdout.txt --stderr=stderr.txt --run -- /usr/bin/python3 main.py".formatted(executeSession.getMemoryLimit()));
+        executeSession.executeIsolateCommand(("--processes --mem=%d --dir=/etc:noexec --meta=execute.meta --stdin=input.txt --stdout=stdout.txt --stderr=stderr.txt --run -- /usr/bin/python3 " + getSrcFileName()).formatted(executeSession.getMemoryLimit()));
 
         RunResponse runResponse = new RunResponse(executeSession);
 

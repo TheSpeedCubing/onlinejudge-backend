@@ -4,7 +4,6 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.speedcubing.onlinejudge.compiler.IExecutor;
-import top.speedcubing.onlinejudge.compiler.LanguageSelector;
 import top.speedcubing.onlinejudge.data.ExecuteSession;
 import top.speedcubing.onlinejudge.data.dto.compiler.CompileResult;
 import top.speedcubing.onlinejudge.data.dto.execute.ExecuteRequest;
@@ -18,13 +17,13 @@ import top.speedcubing.onlinejudge.utils.ShellExecutor;
 public class ExecuteService {
 
     @Autowired
-    private LanguageSelector languageSelector;
+    private LanguageService languageService;
 
     private int i = 0;
 
     public ExecuteResponse execute(ExecuteRequest executeRequest) {
         try {
-            IExecutor compiler = languageSelector.get(executeRequest.getSourceCode().getLanguage());
+            IExecutor compiler = languageService.get(executeRequest.getSourceCode().getLanguage());
 
             // isolate environment
             i++;
@@ -46,7 +45,6 @@ public class ExecuteService {
             executeSession.executeInBox("touch compile_stderr.txt");
             executeSession.executeInBox("touch stdout.txt");
             executeSession.executeInBox("touch stderr.txt");
-
 
             // compile
             ExecuteResponse executeResponse = new ExecuteResponse();

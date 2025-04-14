@@ -22,13 +22,23 @@ public class CPPExecutorImpl implements IExecutor {
     }
 
     @Override
+    public String getSrcFileName() {
+        return "main.cpp";
+    }
+
+    @Override
+    public String getName() {
+        return "cpp";
+    }
+
+    @Override
     public void init(ExecuteSession executeSession) throws IOException {
         FileUtils.write(executeSession.getBox().getAbsBoxDir(), "main.cpp", executeSession.getExecuteRequest().getSourceCode().getCode());
     }
 
     @Override
     public CompileResult compile(ExecuteSession executeSession) throws IOException, InterruptedException {
-        executeSession.executeIsolateCommand("--processes --dir=/etc:noexec --meta=compile.meta --stdout=compile_stdout.txt --stderr=compile_stderr.txt --run -- /usr/bin/g++ -o out main.cpp");
+        executeSession.executeIsolateCommand("--processes --dir=/etc:noexec --meta=compile.meta --stdout=compile_stdout.txt --stderr=compile_stderr.txt --run -- /usr/bin/g++ -o out " + getSrcFileName());
 
         CompileResult compileResult = new CompileResult(executeSession);
 

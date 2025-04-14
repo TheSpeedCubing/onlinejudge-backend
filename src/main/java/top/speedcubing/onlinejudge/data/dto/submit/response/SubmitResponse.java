@@ -18,6 +18,7 @@ public class SubmitResponse {
     @Schema
     private ExecuteResponse executeResponse;
 
+    @Setter
     @Schema
     private ExecuteResponse officialExecuteResponse;
 

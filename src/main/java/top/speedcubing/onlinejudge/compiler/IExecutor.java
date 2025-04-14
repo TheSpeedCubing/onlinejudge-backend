@@ -13,4 +13,8 @@ public interface IExecutor {
     RunResponse run(ExecuteSession executeSession) throws IOException, InterruptedException;
 
     String getVersionString();
+
+    String getSrcFileName();
+
+    String getName();
 }
