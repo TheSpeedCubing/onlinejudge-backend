@@ -7,13 +7,12 @@ import lombok.Setter;
 import top.speedcubing.onlinejudge.data.dto.SourceCode;
 
 @Getter
-@Setter
 @AllArgsConstructor
 public class ExecuteRequest {
 
     @Schema(example = "Hello, World!")
-    private final String stdin;
+    private String stdin;
 
     @Schema
-    private final SourceCode sourceCode;
+    private SourceCode sourceCode;
 }

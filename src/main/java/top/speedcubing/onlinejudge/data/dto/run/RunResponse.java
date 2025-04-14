@@ -11,11 +11,12 @@ import top.speedcubing.onlinejudge.data.ExecuteSession;
 import top.speedcubing.onlinejudge.data.meta.Meta;
 import top.speedcubing.onlinejudge.utils.IOUtils;
 
-@Getter
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RunResponse {
 
     @Setter
+    @Getter
     @Schema
     private boolean success;
 
@@ -31,7 +32,6 @@ public class RunResponse {
     @Schema
     private Double time;
 
-    @Getter
     @JsonIgnore
     private final ExecuteSession executeSession;
 

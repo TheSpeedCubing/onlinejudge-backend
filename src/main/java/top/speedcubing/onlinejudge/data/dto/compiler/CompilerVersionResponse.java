@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CompilerVersionResponse {
-    private String version;
+    private final String version;
 }
