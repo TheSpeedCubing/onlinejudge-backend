@@ -5,21 +5,25 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import top.speedcubing.onlinejudge.data.Verdict;
-import top.speedcubing.onlinejudge.data.dto.execute.ExecuteResponse;
+import top.speedcubing.onlinejudge.data.dto.execute.ExecuteResult;
 
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SubmitResponse {
+public class SubmitResult {
 
     @Schema
     private Verdict verdict;
 
     @Setter
     @Schema
-    private ExecuteResponse executeResponse;
+    private String diff;
 
     @Setter
     @Schema
-    private ExecuteResponse officialExecuteResponse;
+    private ExecuteResult executeResult;
+
+    @Setter
+    @Schema
+    private ExecuteResult officialExecuteResult;
 }

@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
-public class ProblemInfoResponse {
+public class ProblemInfoResult {
     @Getter
     @Schema
     private Problem problem;

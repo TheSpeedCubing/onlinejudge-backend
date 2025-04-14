@@ -7,8 +7,9 @@ import top.speedcubing.onlinejudge.compiler.IExecutor;
 import top.speedcubing.onlinejudge.data.ExecuteSession;
 import top.speedcubing.onlinejudge.data.dto.compiler.CompileResult;
 import top.speedcubing.onlinejudge.data.dto.execute.ExecuteRequest;
-import top.speedcubing.onlinejudge.data.dto.execute.ExecuteResponse;
-import top.speedcubing.onlinejudge.data.dto.run.RunResponse;
+import top.speedcubing.onlinejudge.data.dto.execute.ExecuteResult;
+import top.speedcubing.onlinejudge.data.dto.run.RunResult;
+import top.speedcubing.onlinejudge.data.meta.Meta;
 import top.speedcubing.onlinejudge.isolate.Box;
 import top.speedcubing.onlinejudge.utils.FileUtils;
 import top.speedcubing.onlinejudge.utils.ShellExecutor;
@@ -21,44 +22,78 @@ public class ExecuteService {
 
     private int i = 0;
 
-    public ExecuteResponse execute(ExecuteRequest executeRequest, boolean exposeStderr) {
+    public ExecuteResult execute(ExecuteRequest executeRequest, boolean exposeStderr) {
         try {
             IExecutor compiler = languageService.get(executeRequest.getSourceCode().getLanguage());
 
             // isolate environment
             i++;
             String tempDir = "isolate-temp-%d/".formatted(i);
-            String absTempDir = "/app/" + tempDir;
+            String absTempDir = "/app/%s".formatted(tempDir);
             ShellExecutor.exec("rm -r " + absTempDir);
             ShellExecutor.exec("mkdir " + absTempDir);
 
-            String box = ShellExecutor.execAt(absTempDir, "isolate --box-id=%d --init".formatted(i));
-            box = box.substring(0, box.length() - 1) + "/box/";
-            System.out.println("[" + box + "]");
+            ShellExecutor.execAt(absTempDir, "isolate --box-id=%d --init".formatted(i));
             // prepare executor
-            ExecuteSession executeSession = new ExecuteSession(new Box(i), executeRequest, 5120000);
+            Box box = new Box(i);
+            ExecuteSession executeSession = new ExecuteSession(box, executeRequest, 5120000);
             compiler.init(executeSession);
 
             // prepare I/O file
-            FileUtils.write(box, "input.txt", executeRequest.getStdin());
+            FileUtils.write(box.getAbsBoxDir(), "input.txt", executeRequest.getStdin());
             executeSession.executeInBox("touch compile_stdout.txt");
             executeSession.executeInBox("touch compile_stderr.txt");
             executeSession.executeInBox("touch stdout.txt");
             executeSession.executeInBox("touch stderr.txt");
 
+            ExecuteResult executeResult = new ExecuteResult();
+            executeResult.setBox(box);
+
             // compile
-            ExecuteResponse executeResponse = new ExecuteResponse();
-            CompileResult compileResult = compiler.compile(executeSession);
-            executeResponse.setCompileResult(compileResult);
-            if (compileResult != null && !compileResult.isSuccess()) {
-                return executeResponse;
+            if (compiler.compile(executeSession)) {
+                CompileResult compileResult = new CompileResult(executeSession);
+                executeResult.setCompileResult(compileResult);
+
+                compileResult.setStdout(executeSession.executeInBox("cat compile_stdout.txt"));
+                compileResult.setStderr(executeSession.executeInBox("cat compile_stderr.txt"));
+
+                Meta meta = compileResult.getMeta();
+                compileResult.setTime(Double.parseDouble(meta.get("time")));
+                String exitcode = meta.get("exitcode");
+
+                if (!exitcode.equals("0")) {
+                    String status = meta.get("status");
+                    if (status.equals("RE")) {
+                        compileResult.setSuccess(false);
+                        return executeResult;
+                    }
+                }
             }
 
             // run
-            RunResponse runResponse = compiler.run(executeSession, exposeStderr);
-            executeResponse.setRunResponse(runResponse);
+            if (compiler.run(executeSession, exposeStderr)) {
 
-            return executeResponse;
+                RunResult runResult = new RunResult(executeSession);
+                executeResult.setRunResult(runResult);
+
+                runResult.setStdout(executeSession.executeInBox("cat stdout.txt"));
+                if (exposeStderr)
+                    runResult.setStderr(executeSession.executeInBox("cat stderr.txt"));
+
+                Meta meta = runResult.getMeta();
+                runResult.setTime(Double.parseDouble(meta.get("time")));
+                String exitcode = meta.get("exitcode");
+
+                if (!exitcode.equals("0")) {
+                    String status = meta.get("status");
+                    if (status.equals("RE")) {
+                        runResult.setSuccess(false);
+                        return executeResult;
+                    }
+                }
+            }
+
+            return executeResult;
         } catch (IOException | InterruptedException ex) {
             ex.printStackTrace();
             return null;

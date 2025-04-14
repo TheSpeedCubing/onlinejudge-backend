@@ -13,12 +13,12 @@ import top.speedcubing.onlinejudge.utils.IOUtils;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RunResponse {
+public class RunResult {
 
     @Setter
     @Getter
     @Schema
-    private boolean success;
+    private boolean success = true;
 
     @Setter
     @Getter
@@ -38,7 +38,7 @@ public class RunResponse {
     @JsonIgnore
     private final ExecuteSession executeSession;
 
-    public RunResponse(ExecuteSession executeSession) {
+    public RunResult(ExecuteSession executeSession) {
         this.executeSession = executeSession;
     }
 

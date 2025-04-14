@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import top.speedcubing.onlinejudge.data.dto.execute.ExecuteRequest;
-import top.speedcubing.onlinejudge.data.dto.execute.ExecuteResponse;
+import top.speedcubing.onlinejudge.data.dto.execute.ExecuteResult;
 import top.speedcubing.onlinejudge.service.ExecuteService;
 
 @RestController
@@ -23,7 +23,7 @@ public class ExecuteController {
     @PostMapping("/execute")
     @ResponseBody
     @Operation(summary = "Execute code with custom stdin", description = "Execute code with custom stdin")
-    public ExecuteResponse execute(@RequestBody ExecuteRequest request) {
+    public ExecuteResult execute(@RequestBody ExecuteRequest request) {
         return executeService.execute(request, true);
     }
 }

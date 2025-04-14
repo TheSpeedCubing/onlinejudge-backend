@@ -9,7 +9,7 @@ import org.yaml.snakeyaml.Yaml;
 import top.speedcubing.onlinejudge.data.dto.SourceCode;
 import top.speedcubing.onlinejudge.data.dto.problem.Problem;
 import top.speedcubing.onlinejudge.data.dto.problem.ProblemInfoRequest;
-import top.speedcubing.onlinejudge.data.dto.problem.ProblemInfoResponse;
+import top.speedcubing.onlinejudge.data.dto.problem.ProblemInfoResult;
 import top.speedcubing.onlinejudge.data.dto.problem.ProblemProperties;
 import top.speedcubing.onlinejudge.exception.exception.ProblemNotFoundException;
 import top.speedcubing.onlinejudge.utils.IOUtils;
@@ -20,8 +20,9 @@ public class ProblemService {
 
     @Autowired
     LanguageService languageService;
-    public ProblemInfoResponse search(ProblemInfoRequest request) {
-        return new ProblemInfoResponse(get(request.getProblemId()));
+
+    public ProblemInfoResult search(ProblemInfoRequest request) {
+        return new ProblemInfoResult(get(request.getProblemId()));
     }
 
     public Problem get(String problemId) {
@@ -29,7 +30,7 @@ public class ProblemService {
             throw new ProblemNotFoundException(problemId);
         }
 
-        String baseDir = "/app/problems/" + problemId + "/";
+        String baseDir = "/app/problems/%s/".formatted(problemId);
         File problemDir = new File(baseDir);
         if (!problemDir.exists()) {
             throw new ProblemNotFoundException(problemId);
@@ -49,15 +50,16 @@ public class ProblemService {
             return null;
         }
     }
+
     public SourceCode getAnswer(Problem problem, String language) {
         try {
-            File answerDir = new File("/app/problems/" + problem.getProblemId() + "/answer/");
+            File answerDir = new File("/app/problems/%s/answer/".formatted(problem.getProblemId()));
 
             String srcFileName = languageService.get(language).getSrcFileName();
             File answerFile = new File(answerDir, srcFileName);
-            if(!answerFile.exists()) {
+            if (!answerFile.exists()) {
                 String[] answerFiles = answerDir.list();
-                if(answerFiles == null || answerFiles.length == 0) {
+                if (answerFiles == null || answerFiles.length == 0) {
                     return null;
                 }
                 srcFileName = answerFiles[0];

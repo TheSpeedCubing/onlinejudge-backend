@@ -13,7 +13,7 @@ import top.speedcubing.onlinejudge.data.dto.submit.request.SubmitRandomRequest;
 import top.speedcubing.onlinejudge.data.dto.submit.request.SubmitSampleRequest;
 import top.speedcubing.onlinejudge.data.dto.submit.request.SubmitSubmitRequest;
 import top.speedcubing.onlinejudge.data.dto.submit.request.SubmitTestRequest;
-import top.speedcubing.onlinejudge.data.dto.submit.response.SubmitResponse;
+import top.speedcubing.onlinejudge.data.dto.submit.response.SubmitResult;
 import top.speedcubing.onlinejudge.service.SubmitService;
 
 @RestController
@@ -27,28 +27,28 @@ public class SubmitController {
     @PostMapping("/finalsubmit")
     @ResponseBody
     @Operation(summary = "Submit code to see if the code is correct", description = "Submit code to see if the code is correct")
-    public SubmitResponse finalsubmit(@RequestBody SubmitSubmitRequest request) {
+    public SubmitResult finalsubmit(@RequestBody SubmitSubmitRequest request) {
         return submitService.submit(request);
     }
 
     @PostMapping("/randomsubmit")
     @ResponseBody
     @Operation(summary = "Submit code with server-generated stdin", description = "Submit code with server-generated stdin")
-    public SubmitResponse randomsubmit(@RequestBody SubmitRandomRequest request) {
+    public SubmitResult randomsubmit(@RequestBody SubmitRandomRequest request) {
         return submitService.submit(request);
     }
 
     @PostMapping("/samplesubmit")
     @ResponseBody
     @Operation(summary = "Submit code with sample stdin", description = "Submit code with sample stdin")
-    public SubmitResponse samplesubmit(@RequestBody SubmitSampleRequest request) {
+    public SubmitResult samplesubmit(@RequestBody SubmitSampleRequest request) {
         return submitService.submit(request);
     }
 
     @PostMapping("/testsubmit")
     @ResponseBody
     @Operation(summary = "Submit code with custom stdin", description = "Submit code with custom stdin")
-    public SubmitResponse testsubmit(@RequestBody SubmitTestRequest request) {
+    public SubmitResult testsubmit(@RequestBody SubmitTestRequest request) {
         return submitService.submit(request);
     }
 }

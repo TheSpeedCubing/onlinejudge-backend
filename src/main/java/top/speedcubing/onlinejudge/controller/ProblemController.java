@@ -9,11 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import top.speedcubing.onlinejudge.data.dto.problem.ProblemInfoRequest;
-import top.speedcubing.onlinejudge.data.dto.problem.ProblemInfoResponse;
-import top.speedcubing.onlinejudge.data.dto.submit.request.SubmitSubmitRequest;
-import top.speedcubing.onlinejudge.data.dto.submit.response.SubmitResponse;
+import top.speedcubing.onlinejudge.data.dto.problem.ProblemInfoResult;
 import top.speedcubing.onlinejudge.service.ProblemService;
-import top.speedcubing.onlinejudge.service.SubmitService;
+
 @RestController
 @RequestMapping("/api/problem")
 @Tag(name = "Problem API", description = "browse problem")
@@ -25,7 +23,7 @@ public class ProblemController {
     @PostMapping("/info")
     @ResponseBody
     @Operation(summary = "Get problem info", description = "Get problem info")
-    public ProblemInfoResponse finalsubmit(@RequestBody ProblemInfoRequest request) {
+    public ProblemInfoResult finalsubmit(@RequestBody ProblemInfoRequest request) {
         return problemService.search(request);
     }
 }

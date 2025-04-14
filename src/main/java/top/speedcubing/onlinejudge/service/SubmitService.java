@@ -1,19 +1,21 @@
 package top.speedcubing.onlinejudge.service;
 
+import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.speedcubing.onlinejudge.data.Verdict;
 import top.speedcubing.onlinejudge.data.dto.execute.ExecuteRequest;
-import top.speedcubing.onlinejudge.data.dto.execute.ExecuteResponse;
+import top.speedcubing.onlinejudge.data.dto.execute.ExecuteResult;
 import top.speedcubing.onlinejudge.data.dto.problem.Problem;
 import top.speedcubing.onlinejudge.data.dto.submit.request.AbstractSubmitRequest;
 import top.speedcubing.onlinejudge.data.dto.submit.request.SubmitSampleRequest;
 import top.speedcubing.onlinejudge.data.dto.submit.request.SubmitTestRequest;
-import top.speedcubing.onlinejudge.data.dto.submit.response.SubmitResponse;
+import top.speedcubing.onlinejudge.data.dto.submit.response.SubmitResult;
 import top.speedcubing.onlinejudge.exception.errorresponse.ErrorResponseList;
 import top.speedcubing.onlinejudge.exception.exception.BadRequestException;
 import top.speedcubing.onlinejudge.exception.exception.ProblemNotFoundException;
 import top.speedcubing.onlinejudge.exception.exception.UnsupportedLanguageException;
+import top.speedcubing.onlinejudge.utils.ShellExecutor;
 
 @Service
 public class SubmitService {
@@ -27,7 +29,7 @@ public class SubmitService {
     @Autowired
     ProblemService problemService;
 
-    public SubmitResponse submit(AbstractSubmitRequest request) {
+    public SubmitResult submit(AbstractSubmitRequest request) {
         ErrorResponseList errorResponseList = new ErrorResponseList();
 
         // get problem
@@ -63,34 +65,39 @@ public class SubmitService {
             stdin = problem.getSampleInput();
         }
 
-        SubmitResponse submitResponse = new SubmitResponse();
+        SubmitResult submitResult = new SubmitResult();
 
-        ExecuteResponse executeResponse = executeService.execute(new ExecuteRequest(stdin, request.getSourceCode()), true);
-        submitResponse.setExecuteResponse(executeResponse);
+        ExecuteResult executeResult = executeService.execute(new ExecuteRequest(stdin, request.getSourceCode()), true);
+        submitResult.setExecuteResult(executeResult);
 
-        if (!executeResponse.getCompileResult().isSuccess()) {
-            submitResponse.setVerdict(Verdict.CE);
-            return submitResponse;
+        if (!executeResult.getCompileResult().isSuccess()) {
+            submitResult.setVerdict(Verdict.CE);
+            return submitResult;
         }
-        if (!executeResponse.getRunResponse().isSuccess()) {
-            submitResponse.setVerdict(Verdict.RE);
-            return submitResponse;
-        }
-
-        ExecuteResponse officialExecuteResponse = executeService.execute(new ExecuteRequest(stdin, problemService.getAnswer(problem,language)), false);
-        submitResponse.setOfficialExecuteResponse(officialExecuteResponse);
-
-        if(!executeResponse.getCompileResult().isSuccess()) {
-            submitResponse.setVerdict(Verdict.ARE);
-            return submitResponse;
+        if (!executeResult.getRunResult().isSuccess()) {
+            submitResult.setVerdict(Verdict.RE);
+            return submitResult;
         }
 
-        if(!executeResponse.getRunResponse().getStdout().equals(officialExecuteResponse.getRunResponse().getStdout())) {
-            submitResponse.setVerdict(Verdict.WA);
+        ExecuteResult officialExecuteResult = executeService.execute(new ExecuteRequest(stdin, problemService.getAnswer(problem, language)), false);
+        submitResult.setOfficialExecuteResult(officialExecuteResult);
+
+        if (!executeResult.getCompileResult().isSuccess()) {
+            submitResult.setVerdict(Verdict.ARE);
+            return submitResult;
+        }
+
+        if (!executeResult.getRunResult().getStdout().equals(officialExecuteResult.getRunResult().getStdout())) {
+            submitResult.setVerdict(Verdict.WA);
+            try {
+                submitResult.setDiff(ShellExecutor.exec("diff -u --label \"your output\" %sstdout.txt --label \"correct output\" %sstdout.txt".formatted(executeResult.getBox().getAbsBoxDir(), officialExecuteResult.getBox().getAbsBoxDir())));
+            } catch (IOException | InterruptedException ex) {
+                ex.printStackTrace();
+            }
         } else {
-            submitResponse.setVerdict(Verdict.AC);
+            submitResult.setVerdict(Verdict.AC);
         }
 
-        return submitResponse;
+        return submitResult;
     }
 }

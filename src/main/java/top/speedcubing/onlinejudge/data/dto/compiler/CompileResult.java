@@ -17,7 +17,7 @@ public class CompileResult {
     @Getter
     @Setter
     @Schema
-    private boolean success;
+    private boolean success = true;
 
     @Getter
     @Setter
