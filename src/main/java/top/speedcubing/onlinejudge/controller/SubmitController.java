@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import top.speedcubing.onlinejudge.data.dto.submit.request.SubmitRandomRequest;
+import top.speedcubing.onlinejudge.data.dto.submit.request.SubmitSampleRequest;
 import top.speedcubing.onlinejudge.data.dto.submit.request.SubmitSubmitRequest;
 import top.speedcubing.onlinejudge.data.dto.submit.request.SubmitTestRequest;
 import top.speedcubing.onlinejudge.data.dto.submit.response.SubmitResponse;
@@ -34,6 +35,13 @@ public class SubmitController {
     @ResponseBody
     @Operation(summary = "Submit code with server-generated stdin", description = "Submit code with server-generated stdin")
     public SubmitResponse randomsubmit(@RequestBody SubmitRandomRequest request) {
+        return submitService.submit(request);
+    }
+
+    @PostMapping("/samplesubmit")
+    @ResponseBody
+    @Operation(summary = "Submit code with sample stdin", description = "Submit code with sample stdin")
+    public SubmitResponse samplesubmit(@RequestBody SubmitSampleRequest request) {
         return submitService.submit(request);
     }
 

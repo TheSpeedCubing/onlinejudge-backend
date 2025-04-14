@@ -22,18 +22,13 @@ public class JavaExecutorImpl implements IExecutor {
     }
 
     @Override
-    public String getVersionString() {
-        return this.versionString;
-    }
-
-    @Override
     public void init(ExecuteSession executeSession) throws IOException {
-        FileUtils.write(executeSession.getAbsBoxDir(), "Main.java", executeSession.getExecuteRequest().getSourceCode().getCode());
+        FileUtils.write(executeSession.getBox().getAbsBoxDir(), "Main.java", executeSession.getExecuteRequest().getSourceCode().getCode());
     }
 
     @Override
     public CompileResult compile(ExecuteSession executeSession) throws IOException, InterruptedException {
-        executeSession.executeInTemp("isolate --processes --dir=etc --meta=compile.meta --stdout=compile_stdout.txt --stderr=compile_stderr.txt --run -- /usr/bin/javac Main.java");
+        executeSession.executeIsolateCommand("--processes --dir=/etc:noexec --meta=compile.meta --stdout=compile_stdout.txt --stderr=compile_stderr.txt --run -- /usr/bin/javac Main.java");
 
         CompileResult compileResult = new CompileResult(executeSession);
 
@@ -56,7 +51,7 @@ public class JavaExecutorImpl implements IExecutor {
 
     @Override
     public RunResponse run(ExecuteSession executeSession) throws IOException, InterruptedException {
-        executeSession.executeInTemp("isolate --processes --mem=%d --dir=etc --meta=execute.meta --stdin=input.txt --stdout=stdout.txt --stderr=stderr.txt --run -- /usr/bin/java -Xmx128M Main".formatted(executeSession.getMemoryLimit()));
+        executeSession.executeIsolateCommand("--processes --mem=%d --dir=/etc:noexec --meta=execute.meta --stdin=input.txt --stdout=stdout.txt --stderr=stderr.txt --run -- /usr/bin/java -Xmx128M Main".formatted(executeSession.getMemoryLimit()));
 
         RunResponse runResponse = new RunResponse(executeSession);
 

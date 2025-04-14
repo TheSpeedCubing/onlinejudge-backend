@@ -40,7 +40,7 @@ public class CompileResult {
 
     @JsonIgnore
     public Meta getMeta() throws IOException {
-        String s = IOUtils.toString(new FileInputStream(executeSession.getAbsTempDir() + "compile.meta"));
+        String s = IOUtils.toString(new FileInputStream(executeSession.getBox().getAbsTempDir() + "compile.meta"));
         return new Meta(s);
     }
 }

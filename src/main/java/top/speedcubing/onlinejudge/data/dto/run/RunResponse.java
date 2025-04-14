@@ -41,7 +41,7 @@ public class RunResponse {
 
     @JsonIgnore
     public Meta getMeta() throws IOException {
-        String s = IOUtils.toString(new FileInputStream(executeSession.getAbsTempDir() + "execute.meta"));
+        String s = IOUtils.toString(new FileInputStream(executeSession.getBox().getAbsTempDir() + "execute.meta"));
         return new Meta(s);
     }
 }
