@@ -28,7 +28,7 @@ OnlineJudge Backend System written with Java Spring
     ```yaml
     services:
       onlinejudge-backend:
-        image: registry.speedcubing.top/onlinejudge-backend
+        image: ghcr.io/thespeedcubing/onlinejudge-backend
         container_name: onlinejudge-backend
         ports:
           - "8080:8080"
