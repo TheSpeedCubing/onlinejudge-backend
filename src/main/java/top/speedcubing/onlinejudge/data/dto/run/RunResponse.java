@@ -21,14 +21,17 @@ public class RunResponse {
     private boolean success;
 
     @Setter
+    @Getter
     @Schema
     private String stdout;
 
     @Setter
+    @Getter
     @Schema
     private String stderr;
 
     @Setter
+    @Getter
     @Schema
     private Double time;
 
