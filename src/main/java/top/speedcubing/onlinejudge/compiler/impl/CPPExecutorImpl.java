@@ -60,7 +60,7 @@ public class CPPExecutorImpl implements IExecutor {
     }
 
     @Override
-    public RunResponse run(ExecuteSession executeSession) throws IOException, InterruptedException {
+    public RunResponse run(ExecuteSession executeSession, boolean exposeStderr) throws IOException, InterruptedException {
         executeSession.executeIsolateCommand("--processes --mem=%d --dir=/etc:noexec --meta=execute.meta --stdin=input.txt --stdout=stdout.txt --stderr=stderr.txt --run -- ./out".formatted(executeSession.getMemoryLimit()));
 
         RunResponse runResponse = new RunResponse(executeSession);

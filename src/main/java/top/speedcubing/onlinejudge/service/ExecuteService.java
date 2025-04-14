@@ -21,7 +21,7 @@ public class ExecuteService {
 
     private int i = 0;
 
-    public ExecuteResponse execute(ExecuteRequest executeRequest) {
+    public ExecuteResponse execute(ExecuteRequest executeRequest, boolean exposeStderr) {
         try {
             IExecutor compiler = languageService.get(executeRequest.getSourceCode().getLanguage());
 
@@ -55,7 +55,7 @@ public class ExecuteService {
             }
 
             // run
-            RunResponse runResponse = compiler.run(executeSession);
+            RunResponse runResponse = compiler.run(executeSession, exposeStderr);
             executeResponse.setRunResponse(runResponse);
 
             return executeResponse;

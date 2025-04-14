@@ -3,8 +3,8 @@ package top.speedcubing.onlinejudge.data.dto.problem;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yaml.snakeyaml.Yaml;
@@ -14,10 +14,8 @@ import top.speedcubing.onlinejudge.service.LanguageService;
 import top.speedcubing.onlinejudge.utils.IOUtils;
 
 @Getter
+@AllArgsConstructor
 public class Problem {
-
-    @Autowired
-    LanguageService languageService;
 
     @Schema
     private final String problemId;
@@ -33,50 +31,4 @@ public class Problem {
     private String sampleOutput;
     @Schema
     private ProblemProperties problemProperties;
-
-    public Problem(String problemId) {
-        if (problemId.contains(".")) {
-            throw new ProblemNotFoundException(problemId);
-        }
-
-        String baseDir = "/app/problems/" + problemId + "/";
-        File problemDir = new File(baseDir);
-        if (!problemDir.exists()) {
-            throw new ProblemNotFoundException(problemId);
-        }
-
-        this.problemId = problemId;
-        try {
-            this.info = IOUtils.toString(new FileInputStream(baseDir + "problem.md"));
-            this.inputDescription = IOUtils.toString(new FileInputStream(baseDir + "input.md"));
-            this.outputDescription = IOUtils.toString(new FileInputStream(baseDir + "output.md"));
-            this.sampleInput = IOUtils.toString(new FileInputStream(baseDir + "input.txt"));
-            this.sampleOutput = IOUtils.toString(new FileInputStream(baseDir + "output.txt"));
-            this.problemProperties = new Yaml().loadAs(new FileInputStream(baseDir + "properties.yml"), ProblemProperties.class);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public SourceCode getAnswer(String language) {
-        try {
-            File answerDir = new File("/app/problems/" + problemId + "/answer/");
-
-            String srcFileName = languageService.get(language).getSrcFileName();
-            File answerFile = new File(answerDir, srcFileName);
-            if(!answerFile.exists()) {
-                String[] answerFiles = answerDir.list();
-                if(answerFiles == null || answerFiles.length == 0) {
-                    return null;
-                }
-                srcFileName = answerFiles[0];
-            }
-            answerFile = new File(answerDir, srcFileName);
-
-            return new SourceCode(IOUtils.toString(new FileInputStream(answerFile)), languageService.fromFileName(srcFileName).getName());
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
 }

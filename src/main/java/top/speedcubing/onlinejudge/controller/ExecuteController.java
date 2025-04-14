@@ -24,6 +24,6 @@ public class ExecuteController {
     @ResponseBody
     @Operation(summary = "Execute code with custom stdin", description = "Execute code with custom stdin")
     public ExecuteResponse execute(@RequestBody ExecuteRequest request) {
-        return executeService.execute(request);
+        return executeService.execute(request, true);
     }
 }

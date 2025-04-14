@@ -10,7 +10,7 @@ public interface IExecutor {
 
     CompileResult compile(ExecuteSession executeSession) throws IOException, InterruptedException;
 
-    RunResponse run(ExecuteSession executeSession) throws IOException, InterruptedException;
+    RunResponse run(ExecuteSession executeSession, boolean exposeStderr) throws IOException, InterruptedException;
 
     String getVersionString();
 

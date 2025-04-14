@@ -45,13 +45,13 @@ public class SubmitService {
         } catch (UnsupportedLanguageException ex) {
             errorResponseList.add(ex);
         }
-
-        if (problem == null) {
-            return null;
-        }
         // throw Exception
         if (!errorResponseList.isEmpty()) {
             throw new BadRequestException(errorResponseList);
+        }
+
+        if (problem == null) {
+            return null;
         }
 
         // get stdin
@@ -63,24 +63,34 @@ public class SubmitService {
             stdin = problem.getSampleInput();
         }
 
-        ExecuteResponse executeResponse = executeService.execute(new ExecuteRequest(stdin, request.getSourceCode()));
+        SubmitResponse submitResponse = new SubmitResponse();
 
-        SubmitResponse submitResponse = new SubmitResponse(executeResponse);
+        ExecuteResponse executeResponse = executeService.execute(new ExecuteRequest(stdin, request.getSourceCode()), true);
+        submitResponse.setExecuteResponse(executeResponse);
 
         if (!executeResponse.getCompileResult().isSuccess()) {
             submitResponse.setVerdict(Verdict.CE);
             return submitResponse;
         }
-
         if (!executeResponse.getRunResponse().isSuccess()) {
             submitResponse.setVerdict(Verdict.RE);
             return submitResponse;
         }
 
-        ExecuteResponse officialExecuteResponse = executeService.execute(new ExecuteRequest(stdin, problem.getAnswer(language)));
+        ExecuteResponse officialExecuteResponse = executeService.execute(new ExecuteRequest(stdin, problemService.getAnswer(problem,language)), false);
         submitResponse.setOfficialExecuteResponse(officialExecuteResponse);
 
-        submitResponse.setVerdict(Verdict.AC);
+        if(!executeResponse.getCompileResult().isSuccess()) {
+            submitResponse.setVerdict(Verdict.ARE);
+            return submitResponse;
+        }
+
+        if(!executeResponse.getRunResponse().getStdout().equals(officialExecuteResponse.getRunResponse().getStdout())) {
+            submitResponse.setVerdict(Verdict.WA);
+        } else {
+            submitResponse.setVerdict(Verdict.AC);
+        }
+
         return submitResponse;
     }
 }

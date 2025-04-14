@@ -15,14 +15,11 @@ public class SubmitResponse {
     @Schema
     private Verdict verdict;
 
+    @Setter
     @Schema
     private ExecuteResponse executeResponse;
 
     @Setter
     @Schema
     private ExecuteResponse officialExecuteResponse;
-
-    public SubmitResponse(ExecuteResponse executeResponse) {
-        this.executeResponse = executeResponse;
-    }
 }
