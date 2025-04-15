@@ -1,7 +1,9 @@
 package top.speedcubing.onlinejudge.service;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import top.speedcubing.onlinejudge.compiler.IExecutor;
 import top.speedcubing.onlinejudge.data.ExecuteSession;
@@ -22,7 +24,8 @@ public class ExecuteService {
 
     private int i = 0;
 
-    public ExecuteResult execute(ExecuteRequest executeRequest, boolean exposeStderr) {
+    @Async("asyncThreadPoolExecutor")
+    public CompletableFuture<ExecuteResult> execute(ExecuteRequest executeRequest, boolean exposeStderr) {
         try {
             IExecutor compiler = languageService.get(executeRequest.getSourceCode().getLanguage());
 
@@ -65,7 +68,7 @@ public class ExecuteService {
                     String status = meta.get("status");
                     if (status.equals("RE")) {
                         compileResult.setSuccess(false);
-                        return executeResult;
+                        return CompletableFuture.completedFuture(executeResult);
                     }
                 }
             }
@@ -88,12 +91,12 @@ public class ExecuteService {
                     String status = meta.get("status");
                     if (status.equals("RE")) {
                         runResult.setSuccess(false);
-                        return executeResult;
+                        return CompletableFuture.completedFuture(executeResult);
                     }
                 }
             }
 
-            return executeResult;
+            return CompletableFuture.completedFuture(executeResult);
         } catch (IOException | InterruptedException ex) {
             ex.printStackTrace();
             return null;

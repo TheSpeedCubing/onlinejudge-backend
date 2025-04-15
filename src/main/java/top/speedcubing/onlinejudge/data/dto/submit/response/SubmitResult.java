@@ -26,4 +26,18 @@ public class SubmitResult {
     @Setter
     @Schema
     private ExecuteResult officialExecuteResult;
+
+    public SubmitResult(ExecuteResult executeResult, Verdict verdict) {
+        this(executeResult, null, verdict);
+    }
+
+    public SubmitResult(ExecuteResult executeResult, ExecuteResult officialExecuteResult) {
+        this(executeResult, officialExecuteResult, null);
+    }
+
+    public SubmitResult(ExecuteResult executeResult, ExecuteResult officialExecuteResult, Verdict verdict) {
+        this.executeResult = executeResult;
+        this.officialExecuteResult = officialExecuteResult;
+        this.verdict = verdict;
+    }
 }

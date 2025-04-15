@@ -28,27 +28,27 @@ public class SubmitController {
     @ResponseBody
     @Operation(summary = "Submit code to see if the code is correct", description = "Submit code to see if the code is correct")
     public SubmitResult finalsubmit(@RequestBody SubmitSubmitRequest request) {
-        return submitService.submit(request);
+        return submitService.submit(request).join();
     }
 
     @PostMapping("/randomsubmit")
     @ResponseBody
     @Operation(summary = "Submit code with server-generated stdin", description = "Submit code with server-generated stdin")
     public SubmitResult randomsubmit(@RequestBody SubmitRandomRequest request) {
-        return submitService.submit(request);
+        return submitService.submit(request).join();
     }
 
     @PostMapping("/samplesubmit")
     @ResponseBody
     @Operation(summary = "Submit code with sample stdin", description = "Submit code with sample stdin")
     public SubmitResult samplesubmit(@RequestBody SubmitSampleRequest request) {
-        return submitService.submit(request);
+        return submitService.submit(request).join();
     }
 
     @PostMapping("/testsubmit")
     @ResponseBody
     @Operation(summary = "Submit code with custom stdin", description = "Submit code with custom stdin")
     public SubmitResult testsubmit(@RequestBody SubmitTestRequest request) {
-        return submitService.submit(request);
+        return submitService.submit(request).join();
     }
 }
