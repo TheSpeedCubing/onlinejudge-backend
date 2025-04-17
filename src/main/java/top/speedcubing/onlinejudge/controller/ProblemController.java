@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import top.speedcubing.onlinejudge.data.dto.problem.ProblemInfoRequest;
 import top.speedcubing.onlinejudge.data.dto.problem.ProblemInfoResult;
+import top.speedcubing.onlinejudge.service.ProblemPoolService;
 import top.speedcubing.onlinejudge.service.ProblemService;
 
 @RestController
@@ -18,12 +19,12 @@ import top.speedcubing.onlinejudge.service.ProblemService;
 public class ProblemController {
 
     @Autowired
-    ProblemService problemService;
+    ProblemPoolService problemPoolService;
 
     @PostMapping("/info")
     @ResponseBody
     @Operation(summary = "Get problem info", description = "Get problem info")
     public ProblemInfoResult finalsubmit(@RequestBody ProblemInfoRequest request) {
-        return problemService.search(request);
+        return new ProblemInfoResult(problemPoolService.get(request.getProblemId()));
     }
 }

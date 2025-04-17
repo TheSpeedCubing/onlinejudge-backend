@@ -21,7 +21,7 @@ public class ErrorResponseList {
     }
 
     public ErrorResponseList(Convertible... excpetion) {
-        for(Convertible e : excpetion) {
+        for (Convertible e : excpetion) {
             add(e);
         }
     }

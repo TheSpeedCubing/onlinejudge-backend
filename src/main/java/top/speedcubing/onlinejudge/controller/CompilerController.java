@@ -9,22 +9,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import top.speedcubing.onlinejudge.compiler.IExecutor;
+import top.speedcubing.onlinejudge.data.dto.compiler.CompilerInfoRequest;
+import top.speedcubing.onlinejudge.data.dto.compiler.CompilerInfoResponse;
 import top.speedcubing.onlinejudge.service.LanguageService;
-import top.speedcubing.onlinejudge.data.dto.compiler.CompilerVersionRequest;
-import top.speedcubing.onlinejudge.data.dto.compiler.CompilerVersionResponse;
 
 @RestController
-@RequestMapping("/api/compilerinfo")
+@RequestMapping("/api/compiler")
 @Tag(name = "Compiler Info API", description = "compiler's info")
 public class CompilerController {
 
     @Autowired
     LanguageService languageService;
 
-    @PostMapping("/version")
+    @PostMapping("/info")
     @ResponseBody
-    @Operation(summary = "Get compiler's version", description = "Get compiler's version")
-    public CompilerVersionResponse execute(@RequestBody CompilerVersionRequest language) {
-        return new CompilerVersionResponse(languageService.get(language.getLanguage()).getVersionString());
+    @Operation(summary = "Get compiler's info", description = "Get compiler's info")
+    public CompilerInfoResponse execute(@RequestBody CompilerInfoRequest compilerInfoRequest) {
+        IExecutor executor = languageService.get(compilerInfoRequest.getLanguage());
+        return new CompilerInfoResponse(executor.getVersionString(), executor.getCompileCommand(), executor.getRunCommand());
     }
 }

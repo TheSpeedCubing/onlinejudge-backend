@@ -2,7 +2,6 @@ package top.speedcubing.onlinejudge.service;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -98,10 +97,10 @@ public class SubmitService {
 
             if (!executeResult.getRunResult().getStdout().equals(officialExecuteResult.getRunResult().getStdout())) {
                 submitResult.setVerdict(Verdict.WA);
-                    submitResult.setDiff(ShellExecutor.exec(
-                            "diff -u --label \"your output\" %sstdout.txt --label \"correct output\" %sstdout.txt"
-                                    .formatted(executeResult.getBox().getAbsBoxDir(), officialExecuteResult.getBox().getAbsBoxDir())
-                    ));
+                submitResult.setDiff(ShellExecutor.exec(
+                        "diff -u --label \"your output\" %sstdout.txt --label \"correct output\" %sstdout.txt"
+                                .formatted(executeResult.getBox().getAbsBoxDir(), officialExecuteResult.getBox().getAbsBoxDir())
+                ));
             } else {
                 submitResult.setVerdict(Verdict.AC);
             }

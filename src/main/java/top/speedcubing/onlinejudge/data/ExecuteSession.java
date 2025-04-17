@@ -1,11 +1,13 @@
 package top.speedcubing.onlinejudge.data;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import top.speedcubing.onlinejudge.data.dto.execute.ExecuteRequest;
+import top.speedcubing.onlinejudge.data.meta.Meta;
 import top.speedcubing.onlinejudge.isolate.Box;
-import top.speedcubing.onlinejudge.utils.ShellExecutor;
+import top.speedcubing.onlinejudge.utils.IOUtils;
 
 @Getter
 @AllArgsConstructor
@@ -14,13 +16,13 @@ public class ExecuteSession {
     private final ExecuteRequest executeRequest;
     private final int memoryLimit;
 
-    // ioi/isolate
-
-    public String executeIsolateCommand(String command) throws IOException, InterruptedException {
-        return ShellExecutor.execAt(getBox().getAbsTempDir(), "isolate --box-id=%d %s".formatted(box.getBoxId(), command));
-    }
-
-    public String executeInBox(String... commands) throws IOException, InterruptedException {
-        return ShellExecutor.execAt(getBox().getAbsBoxDir(), commands);
+    public Meta getMeta() {
+        try {
+            String s = IOUtils.toString(new FileInputStream(getBox().getAbsTempDir() + "execute.meta"));
+            return new Meta(s);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 }

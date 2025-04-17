@@ -18,12 +18,9 @@ import top.speedcubing.onlinejudge.utils.IOUtils;
 @Service
 public class ProblemService {
 
+
     @Autowired
     LanguageService languageService;
-
-    public ProblemInfoResult search(ProblemInfoRequest request) {
-        return new ProblemInfoResult(get(request.getProblemId()));
-    }
 
     public Problem get(String problemId) {
         if (problemId.contains(".")) {

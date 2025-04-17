@@ -29,18 +29,28 @@ public class PythonExecutorImpl implements IExecutor {
     }
 
     @Override
-    public void init(ExecuteSession executeSession) throws IOException {
-        FileUtils.write(executeSession.getBox().getAbsBoxDir(), "main.py", executeSession.getExecuteRequest().getSourceCode().getCode());
+    public String getCompileCommand() {
+        return null;
     }
 
     @Override
-    public boolean compile(ExecuteSession executeSession) throws IOException, InterruptedException {
+    public String getRunCommand() {
+        return "python3 %s";
+    }
+
+    @Override
+    public void init(ExecuteSession executeSession) throws IOException {
+        FileUtils.write(executeSession.getBox().getAbsBoxDir() + getSrcFileName(), executeSession.getExecuteRequest().getSourceCode().getCode());
+    }
+
+    @Override
+    public boolean compile(ExecuteSession executeSession) {
         return false;
     }
 
     @Override
     public boolean run(ExecuteSession executeSession, boolean exposeStderr) throws IOException, InterruptedException {
-        executeSession.executeIsolateCommand(("--processes --mem=%d --dir=/etc:noexec --meta=execute.meta --stdin=input.txt --stdout=stdout.txt --stderr=stderr.txt --run -- /usr/bin/python3 " + getSrcFileName()).formatted(executeSession.getMemoryLimit()));
+        executeSession.getBox().executeIsolateCommand(("--processes --mem=%d --dir=/etc:noexec --meta=execute.meta --stdin=input.txt --stdout=stdout.txt --stderr=stderr.txt --run -- /usr/bin/%s").formatted(executeSession.getMemoryLimit(), getRunCommand().formatted(getSrcFileName())));
         return true;
     }
 }

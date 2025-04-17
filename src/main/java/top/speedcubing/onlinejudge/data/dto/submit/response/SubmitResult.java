@@ -8,10 +8,10 @@ import top.speedcubing.onlinejudge.data.Verdict;
 import top.speedcubing.onlinejudge.data.dto.execute.ExecuteResult;
 
 @Getter
-@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SubmitResult {
 
+    @Setter
     @Schema
     private Verdict verdict;
 
@@ -19,13 +19,11 @@ public class SubmitResult {
     @Schema
     private String diff;
 
-    @Setter
     @Schema
-    private ExecuteResult executeResult;
+    private final ExecuteResult executeResult;
 
-    @Setter
     @Schema
-    private ExecuteResult officialExecuteResult;
+    private final ExecuteResult officialExecuteResult;
 
     public SubmitResult(ExecuteResult executeResult, Verdict verdict) {
         this(executeResult, null, verdict);

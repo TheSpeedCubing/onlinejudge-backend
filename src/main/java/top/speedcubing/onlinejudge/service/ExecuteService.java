@@ -43,56 +43,47 @@ public class ExecuteService {
             compiler.init(executeSession);
 
             // prepare I/O file
-            FileUtils.write(box.getAbsBoxDir(), "input.txt", executeRequest.getStdin());
-            executeSession.executeInBox("touch compile_stdout.txt");
-            executeSession.executeInBox("touch compile_stderr.txt");
-            executeSession.executeInBox("touch stdout.txt");
-            executeSession.executeInBox("touch stderr.txt");
+            FileUtils.write(box.getAbsBoxDir() + "input.txt", executeRequest.getStdin());
+            box.executeInBox("touch compile_stdout.txt");
+            box.executeInBox("touch compile_stderr.txt");
+            box.executeInBox("touch stdout.txt");
+            box.executeInBox("touch stderr.txt");
 
             ExecuteResult executeResult = new ExecuteResult();
             executeResult.setBox(box);
 
             // compile
             if (compiler.compile(executeSession)) {
-                CompileResult compileResult = new CompileResult(executeSession);
+
+                Meta meta = executeSession.getMeta();
+                boolean success = executeSession.getMeta().get("exitcode").equals("0");
+
+                CompileResult compileResult = new CompileResult(success,
+                        box.executeInBox("cat compile_stdout.txt"),
+                        box.executeInBox("cat compile_stderr.txt"),
+                        Double.parseDouble(meta.get("time")));
+
                 executeResult.setCompileResult(compileResult);
 
-                compileResult.setStdout(executeSession.executeInBox("cat compile_stdout.txt"));
-                compileResult.setStderr(executeSession.executeInBox("cat compile_stderr.txt"));
-
-                Meta meta = compileResult.getMeta();
-                compileResult.setTime(Double.parseDouble(meta.get("time")));
-                String exitcode = meta.get("exitcode");
-
-                if (!exitcode.equals("0")) {
-                    String status = meta.get("status");
-                    if (status.equals("RE")) {
-                        compileResult.setSuccess(false);
-                        return CompletableFuture.completedFuture(executeResult);
-                    }
+                if (!success) {
+                    return CompletableFuture.completedFuture(executeResult);
                 }
             }
 
             // run
             if (compiler.run(executeSession, exposeStderr)) {
 
-                RunResult runResult = new RunResult(executeSession);
+                Meta meta = executeSession.getMeta();
+                boolean success = executeSession.getMeta().get("exitcode").equals("0");
+
+                RunResult runResult = new RunResult(success,
+                        box.executeInBox("cat stdout.txt"),
+                        exposeStderr ? box.executeInBox("cat stderr.txt") : null,
+                        Double.parseDouble(meta.get("time")));
                 executeResult.setRunResult(runResult);
 
-                runResult.setStdout(executeSession.executeInBox("cat stdout.txt"));
-                if (exposeStderr)
-                    runResult.setStderr(executeSession.executeInBox("cat stderr.txt"));
-
-                Meta meta = runResult.getMeta();
-                runResult.setTime(Double.parseDouble(meta.get("time")));
-                String exitcode = meta.get("exitcode");
-
-                if (!exitcode.equals("0")) {
-                    String status = meta.get("status");
-                    if (status.equals("RE")) {
-                        runResult.setSuccess(false);
-                        return CompletableFuture.completedFuture(executeResult);
-                    }
+                if (!success) {
+                    return CompletableFuture.completedFuture(executeResult);
                 }
             }
 

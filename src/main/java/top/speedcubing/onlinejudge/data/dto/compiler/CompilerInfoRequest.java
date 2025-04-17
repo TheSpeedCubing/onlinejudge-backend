@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 @Getter
-public class CompilerVersionRequest {
+public class CompilerInfoRequest {
 
     @Schema(example = "java")
     private String language;
